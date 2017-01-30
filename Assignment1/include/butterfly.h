@@ -4,9 +4,9 @@ Wine Glass Points and Curve Sizes
 
 #include <defines.h>
 
-const int num_curve = 11;
+const int bfly_num_curve = 11;
 
-int curve_size[11] = 
+int bfly_curve_size[11] = 
 {
 	108,
 	110,
@@ -22,7 +22,7 @@ int curve_size[11] =
 
 };
 
-CPOINT curve[250] = 
+CPOINT bfly_curve[500] = 
 {
 	{124.42	, 108.61   }, 
 	{122.66	, 111.54   }, 

@@ -13,6 +13,9 @@ typedef enum
 	WINEGLASS,
 	BUTTERFLY,
 	CRANE,
+	ROTATE,
+	SCALE,
+	UPDATE
 } CMD;
 
 typedef enum 

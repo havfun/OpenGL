@@ -2,9 +2,9 @@
 Wine Glass Points and Curve Sizes
 *********/
 #include <defines.h>
-const int num_curve = 5;
+const int wine_num_curve = 5;
 
-int curve_size[5] = 
+int wine_curve_size[5] = 
 {
 	40,
 	70,
@@ -13,7 +13,7 @@ int curve_size[5] =
 	44    
 };
 
-CPOINT curve[250] = {
+CPOINT wine_curve[250] = {
 	{14, 210.75},
 	{15.03, 215.19}, 
 	{19.47, 218.26},

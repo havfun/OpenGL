@@ -6,12 +6,18 @@
 #include<wine_glass.h>
 #include<butterfly.h>
 
+#include<crane.h>
+
 
 static GLfloat spin = 0.0;
 static GLfloat scalex = 1.0, scaley = 1.0;
 static GLfloat transx = 0.0, transy = 0.0;
 static GLint isTrans = 0;
 static GLint option = 0;
+int cmd, c_type;
+int num_curve;
+int *curve_size;
+CPOINT * curve;
 
 void init(void) 
 {
@@ -132,28 +138,105 @@ void disp_bz_curve(int idx)
 void print_usage()
 {
 	printf("Key Codes :\n");
-	printf("\t1\t:Wine Glass");
-	printf("\t2\t:Butterfly");
-	printf("\t3\t:Crane");
-	printf("\t Esc/Q/q\t: Quit Program\n");
+	printf("\tR\t:Reset\n");
+	printf("\t1\t:Wine Glass\n");
+	printf("\t2\t:Butterfly\n");
+	printf("\t3\t:Crane\n");
+	printf("\tr\t:Rotate Right\n");
+	printf("\tl\t:Rotate Left\n");
+	printf("\t+\t:Zoom In\n");
+	printf("\t-\t:Zoom Out\n");
+	printf("  Curve Type\t:\n");
+	printf("\tB\t:Bezier\n");
+	printf("\tL\t:Lagrange\n");
+	printf("\tEsc/Q/q\t: Quit Program\n");
 }
 
 void keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
-	case 'r':
-		cmd = ;
+	case 'R':
+		cmd = RESET;
+		glClear(GL_COLOR_BUFFER_BIT);
+		spin = 0;
+		scalex = scaley = 1;
+		transx = transy = 0;
+		glPopMatrix();
+		glLoadIdentity();
 		break;
 	case '1':
 		// Draw Wine Glass
+
+		cmd = WINEGLASS;
+		curve = wine_curve;
+		curve_size = wine_curve_size;
+		num_curve = wine_num_curve;
+		glutPostRedisplay();
 		break;
 	case '2':
 		// Draw Butterfly
+
+		cmd = BUTTERFLY;
+		curve = bfly_curve;
+		curve_size = bfly_curve_size;
+		num_curve = bfly_num_curve;
+		glutPostRedisplay();
 		break;
 	case '3':
 		// Draw Crane
-		break;
 
+		cmd = CRANE;
+		curve = crane_curve;
+		curve_size = crane_curve_size;
+		num_curve = crane_num_curve;
+		glutPostRedisplay();
+		break;
+	case 'r':
+		if(spin > 0.0)
+			spin = 0.0;
+		spin = spin - 0.5;
+		if (spin < -360)
+			spin = spin + 360;
+		cmd = ROTATE;
+		glutPostRedisplay();
+		break;
+	case 'l':
+		if(spin < 0.0)
+			spin = 0.0;
+		spin = spin + 0.5;
+		if (spin > 360.0)
+			spin = spin - 360.0;
+		cmd = ROTATE;
+		glutPostRedisplay();
+		break;
+	case '+':
+		if(scalex < 1) 
+			scalex = 1;
+		if(scaley < 1)
+			scaley = 1;
+		scalex += 0.05;
+		scaley += 0.05;
+		cmd = SCALE;
+		glutPostRedisplay();
+		break;
+	case '-':
+		if(scalex > 1) 
+			scalex = 1;
+		if(scaley > 1)
+			scaley = 1;
+		scalex -= 0.05;
+		scaley -= 0.05;
+		cmd = SCALE;
+		glutPostRedisplay();
+		break;
+	case 'B':
+		c_type = BEZIER;
+		glutPostRedisplay();
+		break;
+	case 'L':
+		c_type = BEZIER;
+		glutPostRedisplay();
+		break;
 	case 'q':
 	case 'Q':
 	case 27:
@@ -174,13 +257,44 @@ void display()
 	int i, k;
 	float x,y,u,blend;
 
-	glClear(GL_COLOR_BUFFER_BIT);
-	glColor3f(1.0, 0.0, 1.0);
+	//if((cmd==WINEGLASS)||(cmd == BUTTERFLY) || (cmd == CRANE))
+	switch(cmd)
+	{
+	case RESET:
+		glClear(GL_COLOR_BUFFER_BIT);
+		spin = 0;
+		scalex = scaley = 1;
+		transx = transy = 0;
+		glPopMatrix();
+		glLoadIdentity();
+		return;
+		break;
 
-	glTranslatef(transx, transy, 0.0);
-	glScalef(scalex, scaley, 0.0);
-	glRotatef(spin, 0.0, 0.0, 1.0); 
+	case WINEGLASS:
+	case BUTTERFLY:
+	case CRANE:
+		glClear(GL_COLOR_BUFFER_BIT);
 
+		spin = 0;
+		scalex = scaley = 1;
+		transx = transy = 0;
+		glPopMatrix();
+		glLoadIdentity();
+
+		glColor3f(1.0, 0.0, 1.0);
+
+		glTranslatef(transx, transy, 0.0);
+		glScalef(scalex, scaley, 0.0);
+		glRotatef(spin, 0.0, 0.0, 1.0); 
+		break;
+
+	case ROTATE:
+		glRotatef(spin, 0.0, 0.0, 1.0);
+		break;
+	case SCALE:
+		glScalef(scalex, scaley, 0.0);
+		break;
+	}
 
 	disp_points();
 
@@ -190,9 +304,8 @@ void display()
 	}
 
 	glFlush();
+
 	return;
-
-
 }
 
 
